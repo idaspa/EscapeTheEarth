@@ -16,13 +16,10 @@ const coropdata = await corparationFetch.json();
 
 console.log(coropdata)
 
-const planetNames = coropdata.bodies.map(body => body.id);
+//const planetNames = coropdata.bodies.map(body => body.id);
 
-const axialInPlanets = coropdata.bodies.map(body => body.axialTilt);
-console.log(planetNames, axialInPlanets);
-
-
-
+//const axialInPlanets = coropdata.bodies.map(body => body.axialTilt);
+//console.log(planetNames, axialInPlanets);
 
 
 console.log(dataStart);
@@ -50,13 +47,13 @@ async function getClosestPlanet() {
     const earthTilt = earthData.axialTilt;
 
     let closestPlanet = null;
-    let smallestDiff = Number.MAX_VALUE; 
+    let smallestDiff = Number.MAX_VALUE;
 
     for (let i = 0; i < coropdata.bodies.length; i++) {
         const planet = coropdata.bodies[i];
 
         if (planet.axialTilt !== null && planet.id !== "terre") {
-            const diff = Math.abs(planet.axialTilt - earthTilt);  
+            const diff = Math.abs(planet.axialTilt - earthTilt);
 
             if (diff < smallestDiff) {
                 smallestDiff = diff;
@@ -64,13 +61,45 @@ async function getClosestPlanet() {
             }
         }
     }
-
     console.log(`Closest planet to Earth in axial tilt: ${closestPlanet.id}`);
     console.log(`Axial tilt of ${closestPlanet.id}: ${closestPlanet.axialTilt}`);
+   
     await answerSpesificQuestion(`closest Planet to earth in axialTilt:${closestPlanet.id}`, closestPlanet.id);
 }
-
 await getClosestPlanet();
+
+
+//Dive back into the system and find the planet with the shortest day'
+
+async function findPlanetWithShortestDay() {
+   
+    let shortestDayPlanet = null;
+    let shortestDay = Number.MAX_VALUE;''
+    
+    for (let i = 0; i < coropdata.bodies.length; i++) {
+        const planet = coropdata.bodies[i];
+
+        if (planet.isPlanet && planet.sideralRotation !== null && planet.sideralRotation > 0) {
+         
+            if (planet.sideralRotation < shortestDay) {
+                shortestDay = planet.sideralRotation;
+                shortestDayPlanet = planet;
+            }
+        }
+    }
+        console.log(`The planet with the shortest day is: ${shortestDayPlanet.id}`);
+        console.log(`The sideralRotation is: ${shortestDayPlanet.sideralRotation} hours`);
+       
+        await answerSpesificQuestion(`The planet With the shortest day is: ${shortestDayPlanet.id}`, shortestDayPlanet.id); 
+}
+await findPlanetWithShortestDay();
+
+
+//Check the system and report back the number of moons the conglomerate is aware of.'
+
+
+
+
 
 
 
