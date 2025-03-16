@@ -3,7 +3,6 @@ import fetch from "node-fetch";
 const corparationSystemURL = "https://api.le-systeme-solaire.net/rest/bodies/";
 const player = "idahha@uia.no";
 
-
 const RIS_URL = "https://spacescavanger.onrender.com/"
 const spaceScavengerAnswerURL = `${RIS_URL}answer`;
 
@@ -15,13 +14,14 @@ const dataStart = await startResponse.json();
 const corparationFetch = await fetch(corparationSystemURL);
 const coropdata = await corparationFetch.json();
 
-//console.log(coropdata)
+console.log(coropdata)
 
-//const planetNames = coropdata.bodies.map(body => body.id);
+const planetNames = coropdata.bodies.map(body => body.id);
 
+    console.log(planetNames.id);
+
+    
 //const axialInPlanets = coropdata.bodies.map(body => body.axialTilt);
-//console.log(planetNames);
-
 
 console.log(dataStart);
 
@@ -41,7 +41,7 @@ await answerSpesificQuestion(`The pin is: ${radiusDiff}`, radiusDiff);
 
 
 //what planet is closest in scale to Earths axial tilt'
-async function getClosestPlanet() {
+async function ClosestPlanet() {
 
     const earthData = await retriveSolarData("terre");
     const earthTilt = earthData.axialTilt;
@@ -66,11 +66,11 @@ async function getClosestPlanet() {
 
     await answerSpesificQuestion(`closest Planet to earth in axialTilt:${closestPlanet.id}`, closestPlanet.id);
 }
-await getClosestPlanet();
+await ClosestPlanet();
 
 
 //Dive back into the system and find the planet with the shortest day'
-async function findPlanetWithShortestDay() {
+async function PlanetWithShortestDay() {
 
     let shortestDayPlanet = null;
     let shortestDay = Number.MAX_VALUE; ''
@@ -91,25 +91,46 @@ async function findPlanetWithShortestDay() {
 
     await answerSpesificQuestion(`The planet With the shortest day is: ${shortestDayPlanet.id}`, shortestDayPlanet.id);
 }
-await findPlanetWithShortestDay();
+await PlanetWithShortestDay();
 
 
 //Check the system and report back the number of moons the conglomerate is aware of.'
 async function moonsOfJupiter() {
-    
     let countOfMoons = 0;
-    const jupiter = coropdata.bodies.find(body => body.id === "jupiter" && Array.isArray(body.moons));
 
-    if (jupiter) {
-        countOfMoons = jupiter.moons.length;
+    for (let i = 0; i < coropdata.bodies.length; i++) {
+        const body = coropdata.bodies[i];
+
+        if (body.id === "jupiter" && body.moons && Array.isArray(body.moons)) {
+            countOfMoons = body.moons.length;
+            break;
+        }
     }
-    //console.log(`The known moon count of Jupiter is ${countOfMoons}`);
+    //console.log(`The known count of moons of Jupiter is ${countOfMoons}`);
     await answerSpesificQuestion(`The known moon count of Jupiter is ${countOfMoons}`, countOfMoons);
 }
-await moonsOfJupiter();
+await moonsOfJupiter()
 
 
+//find the largest moon
+async function largestMoon() {
+    let largestMoon = null;
+    let radiusOfLargestMoon = 0;
 
+    for (let i = 0; i < coropdata.bodies.length; i++) {
+        const body = coropdata.bodies[i];
+
+        if (body.bodyType === `Moon` && body.meanRadius) {
+            if (body.meanRadius > radiusOfLargestMoon) {
+                largestMoon = body;
+                radiusOfLargestMoon = body.meanRadius;
+            }
+        }
+    }
+    //console.log(`The largest moon is ${largestMoon.id}`)
+    await answerSpesificQuestion(`The largest moon is${largestMoon.id}`, largestMoon.id)
+}
+await largestMoon()
 
 
 
